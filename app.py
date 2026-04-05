@@ -307,7 +307,13 @@ with tab6:
         test_pct = st.slider("Test Size %", 10, 40, 20, key="rslide")
 
         if len(sel_features) >= 1 and st.button("🚀 Train & Evaluate", key="rbtn"):
-            X = df_enc[sel_features]; y = df_enc[target_col]
+            X = df_enc[sel_features]
+            y = df_enc[target_col]
+            X = X.replace([np.inf, -np.inf], np.nan)
+            X = X.fillna(X.mean())
+
+            y = y.replace([np.inf, -np.inf], np.nan)
+            y = y.fillna(y.mean())
             Xtr,Xte,ytr,yte = train_test_split(X, y, test_size=test_pct/100, random_state=42)
             sc = StandardScaler(); Xtr_s = sc.fit_transform(Xtr); Xte_s = sc.transform(Xte)
 
