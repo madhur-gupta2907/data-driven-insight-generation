@@ -123,10 +123,16 @@ with st.sidebar:
     st.markdown("## ⚙️ Controls")
     src = st.radio("Data Source", ["📦 Sample Dataset","📂 Upload CSV"])
     if src == "📂 Upload CSV":
-        upl = st.file_uploader("Upload CSV", type=["csv"])
-        df_raw = pd.read_csv(upl) if upl else load_sample_data()
+    upl = st.file_uploader("Upload CSV", type=["csv"])
+    if upl:
+        try:
+            df_raw = pd.read_csv(upl, encoding="utf-8")
+        except:
+            df_raw = pd.read_csv(upl, encoding="latin1")
     else:
         df_raw = load_sample_data()
+else:
+    df_raw = load_sample_data()
     st.markdown("---")
     numeric_cols = df_raw.select_dtypes(include=np.number).columns.tolist()
     cat_cols     = df_raw.select_dtypes(include="object").columns.tolist()
