@@ -13,11 +13,9 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics import (mean_absolute_error, mean_squared_error, r2_score,
                               accuracy_score, classification_report, confusion_matrix)
 
-# ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(page_title="DataLens – Insight & Prediction", page_icon="🔍",
                    layout="wide", initial_sidebar_state="expanded")
 
-# ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -48,7 +46,6 @@ button[data-baseweb="tab"][aria-selected="true"]{color:#a78bfa!important;border-
 </style>
 """, unsafe_allow_html=True)
 
-# ── Colors ────────────────────────────────────────────────────────────────────
 PALETTE    = ["#a78bfa","#60a5fa","#34d399","#fb923c","#f472b6","#facc15","#38bdf8","#4ade80","#c084fc","#f87171"]
 BG_COLOR   = "#0f0f1a"
 GRID_COLOR = "#1e1e3a"
@@ -65,7 +62,6 @@ def apply_dark_style(fig, ax_list=None):
         for spine in ax.spines.values(): spine.set_edgecolor(GRID_COLOR)
         ax.grid(True, color=GRID_COLOR, linewidth=0.5, linestyle="--", alpha=0.6)
 
-# ── Sample data ───────────────────────────────────────────────────────────────
 @st.cache_data
 def load_sample_data():
     np.random.seed(42)
@@ -115,10 +111,8 @@ def generate_insights(df, num_col, cat_col):
     recs.append(f"🎯 <strong>Set targets</strong> at top-quartile ({df[num_col].quantile(0.75):,.1f}) for all categories.")
     return insights, recs
 
-# ══════════════════════════════════════════════════════════════════════════════
 st.markdown('<div class="main-header"><h1>🔍 DataLens</h1><p>Data-Driven Insight & Prediction Platform</p></div>', unsafe_allow_html=True)
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## ⚙️ Controls")
     src = st.radio("Data Source", ["📦 Sample Dataset","📂 Upload CSV"])
@@ -146,8 +140,6 @@ with st.sidebar:
 tab1,tab2,tab3,tab4,tab5,tab6 = st.tabs([
     "📊 Overview","🧹 Data Cleaning","📈 EDA Charts","🔮 Insights","💼 Recommendations","🤖 Predictions"
 ])
-
-# ══ TAB 1 ════════════════════════════════════════════════════════════════════
 with tab1:
     st.markdown('<div class="section-title">Dataset Overview</div>', unsafe_allow_html=True)
     c1,c2,c3,c4 = st.columns(4)
@@ -159,7 +151,6 @@ with tab1:
     st.markdown('<div class="section-title">Statistical Summary</div>', unsafe_allow_html=True)
     st.dataframe(df_raw.describe().round(2), width='stretch')
 
-# ══ TAB 2 ════════════════════════════════════════════════════════════════════
 with tab2:
     st.markdown('<div class="section-title">Data Cleaning Report</div>', unsafe_allow_html=True)
     miss = df_raw.isnull().sum(); miss_pct = (miss/len(df_raw)*100).round(2)
@@ -184,7 +175,6 @@ with tab2:
     else: st.success("✅ No significant outliers!")
     st.success(f"✅ Clean dataset: {len(dfc)} rows × {dfc.shape[1]} columns")
 
-# ══ TAB 3 ════════════════════════════════════════════════════════════════════
 with tab3:
     dfc = clean_df(df_raw)
     st.markdown('<div class="section-title">Distribution Analysis</div>', unsafe_allow_html=True)
@@ -244,7 +234,6 @@ with tab3:
         ax.legend(fontsize=8,facecolor=GRID_COLOR,labelcolor=TEXT_COLOR,framealpha=0.6)
         apply_dark_style(fig,[ax]); st.pyplot(fig); plt.close()
 
-# ══ TAB 4 ════════════════════════════════════════════════════════════════════
 with tab4:
     dfc = clean_df(df_raw)
     st.markdown('<div class="section-title">🔮 Auto-Generated Insights</div>', unsafe_allow_html=True)
@@ -265,7 +254,6 @@ with tab4:
         ax.fill_between(mdf.index,mdf.values,alpha=0.15,color=PALETTE[0])
         ax.set_title(f"Monthly Avg {sel_num}"); apply_dark_style(fig,[ax]); st.pyplot(fig); plt.close()
 
-# ══ TAB 5 ════════════════════════════════════════════════════════════════════
 with tab5:
     dfc = clean_df(df_raw)
     _,recs = generate_insights(dfc,sel_num,sel_cat)
@@ -291,7 +279,6 @@ with tab5:
     <strong>Key Finding 3:</strong> ML models predict {sel_num} with measurable accuracy — see Predictions tab.
     </div>""", unsafe_allow_html=True)
 
-# ══ TAB 6 — PREDICTIONS 🤖 ════════════════════════════════════════════════════
 with tab6:
     st.markdown('<div class="section-title">🤖 ML Prediction Engine</div>', unsafe_allow_html=True)
     dfc = clean_df(df_raw)
@@ -301,7 +288,6 @@ with tab6:
         ["📉 Regression — Predict a Number", "🏷️ Classification — Predict a Category"], horizontal=True)
     st.markdown("---")
 
-    # ════════════════ REGRESSION ════════════════════════════════════════════
     if "Regression" in pred_type:
         st.markdown("### 📉 Regression — Predict a Numeric Value")
         col_a, col_b = st.columns(2)
@@ -334,7 +320,7 @@ with tab6:
             rmse = np.sqrt(mean_squared_error(yte, ypred))
             r2   = r2_score(yte, ypred)
 
-            # Metrics
+          
             st.markdown('<div class="section-title">📊 Model Performance</div>', unsafe_allow_html=True)
             m1,m2,m3,m4 = st.columns(4)
             m1.markdown(f'<div class="pred-card"><h2>{r2:.3f}</h2><p>R² Score</p></div>', unsafe_allow_html=True)
@@ -348,7 +334,6 @@ with tab6:
                  "🔴 Weak. Consider different features.")
             st.markdown(f'<div class="insight-box">🧠 <strong>Model:</strong> {q} | R²={r2:.3f} → model explains <strong>{r2*100:.1f}%</strong> of variance in {target_col}.</div>', unsafe_allow_html=True)
 
-            # Actual vs Predicted + Residuals
             st.markdown('<div class="section-title">Actual vs Predicted + Residuals</div>', unsafe_allow_html=True)
             fig, axes = plt.subplots(1, 2, figsize=(12, 5))
             axes[0].scatter(yte, ypred, color=PALETTE[0], alpha=0.5, s=20, edgecolors="none")
@@ -362,7 +347,6 @@ with tab6:
             axes[1].set_xlabel("Predicted"); axes[1].set_ylabel("Residual"); axes[1].set_title("Residual Plot")
             apply_dark_style(fig, axes.tolist()); st.pyplot(fig); plt.close()
 
-            # Feature Importance / Coefficients
             st.markdown('<div class="section-title">Feature Importance / Coefficients</div>', unsafe_allow_html=True)
             if hasattr(mdl, "feature_importances_"):
                 fi = pd.Series(mdl.feature_importances_, index=sel_features).sort_values(ascending=True)
@@ -378,7 +362,6 @@ with tab6:
                 ax.axvline(0, color=TEXT_COLOR, linewidth=0.8, linestyle="--")
                 ax.set_title("Regression Coefficients (green=positive, red=negative)"); apply_dark_style(fig,[ax]); st.pyplot(fig); plt.close()
 
-            # Prediction Distribution
             st.markdown('<div class="section-title">Prediction Error Distribution</div>', unsafe_allow_html=True)
             fig,ax = plt.subplots(figsize=(10,4))
             ax.hist(residuals, bins=30, color=PALETTE[1], edgecolor=BG_COLOR, alpha=0.85)
@@ -388,12 +371,10 @@ with tab6:
             ax.set_title("Residual Distribution"); ax.set_xlabel("Error (Actual - Predicted)"); ax.set_ylabel("Frequency")
             apply_dark_style(fig,[ax]); st.pyplot(fig); plt.close()
 
-            # Store model in session
             st.session_state["reg_model"]  = mdl
             st.session_state["reg_scaler"] = sc
             st.session_state["reg_feats"]  = sel_features
 
-        # Live Predictor — always shown if model trained
         if "reg_model" in st.session_state:
             st.markdown('<div class="section-title">⚡ Live Predictor — Enter Values</div>', unsafe_allow_html=True)
             st.markdown("Adjust input values and click **Predict** to get an instant forecast:")
@@ -413,7 +394,6 @@ with tab6:
                   <h1>{result:,.2f}</h1>
                   <p>Model: {model_choice}</p></div>""", unsafe_allow_html=True)
 
-    # ════════════════ CLASSIFICATION ════════════════════════════════════════
     else:
         st.markdown("### 🏷️ Classification — Predict a Category")
         col_a, col_b = st.columns(2)
@@ -437,7 +417,6 @@ with tab6:
             mdl.fit(Xtr_s, ytr); ypred = mdl.predict(Xte_s)
             acc = accuracy_score(yte, ypred)
 
-            # Metrics
             st.markdown('<div class="section-title">📊 Classifier Performance</div>', unsafe_allow_html=True)
             m1,m2,m3 = st.columns(3)
             m1.markdown(f'<div class="pred-card"><h2>{acc*100:.1f}%</h2><p>Accuracy</p></div>', unsafe_allow_html=True)
@@ -450,7 +429,6 @@ with tab6:
                  "🔴 Weak — consider different features.")
             st.markdown(f'<div class="insight-box">🧠 {q} Accuracy = <strong>{acc*100:.1f}%</strong> on unseen data.</div>', unsafe_allow_html=True)
 
-            # Confusion Matrix
             st.markdown('<div class="section-title">Confusion Matrix</div>', unsafe_allow_html=True)
             le = le_map.get(target_col)
             class_labels = le.classes_ if le else np.unique(y)
@@ -462,12 +440,10 @@ with tab6:
             ax.set_xlabel("Predicted"); ax.set_ylabel("Actual"); ax.set_title("Confusion Matrix")
             apply_dark_style(fig,[ax]); st.pyplot(fig); plt.close()
 
-            # Classification Report
             st.markdown('<div class="section-title">Classification Report</div>', unsafe_allow_html=True)
             rpt = classification_report(yte, ypred, target_names=[str(c) for c in class_labels], output_dict=True)
             st.dataframe(pd.DataFrame(rpt).T.round(3), width='stretch')
 
-            # Feature Importance
             if hasattr(mdl,"feature_importances_"):
                 st.markdown('<div class="section-title">Feature Importance</div>', unsafe_allow_html=True)
                 fi = pd.Series(mdl.feature_importances_, index=sel_features).sort_values(ascending=True)
@@ -484,7 +460,6 @@ with tab6:
             st.session_state["cls_labels"] = class_labels
             st.session_state["cls_le"]     = le
 
-        # Live Classifier
         if "cls_model" in st.session_state:
             st.markdown('<div class="section-title">⚡ Live Category Predictor</div>', unsafe_allow_html=True)
             inp = {}
@@ -509,7 +484,6 @@ with tab6:
                   <h1>{label}</h1>
                   <p>Confidence: {conf:.1f}% | Model: {model_choice}</p></div>""", unsafe_allow_html=True)
 
-                # Probability bars
                 prob_df = pd.DataFrame({"Class":[str(c) for c in clabels],"Prob%":(probas*100).round(1)}).sort_values("Prob%",ascending=True)
                 fig,ax = plt.subplots(figsize=(8,max(3,len(clabels)*0.5)))
                 cols_p = [PALETTE[2] if str(c)==str(label) else PALETTE[0] for c in prob_df["Class"]]
@@ -519,5 +493,4 @@ with tab6:
                     ax.text(v+0.5,i,f"{v:.1f}%",va="center",fontsize=9,color=TEXT_COLOR)
                 apply_dark_style(fig,[ax]); st.pyplot(fig); plt.close()
 
-# ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown('<div style="text-align:center;padding:40px 0 20px;color:#334155;font-size:0.8rem;">DataLens · Streamlit · Pandas · Matplotlib · Seaborn · Scikit-learn</div>', unsafe_allow_html=True)
